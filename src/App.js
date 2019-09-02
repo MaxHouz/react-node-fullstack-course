@@ -1,13 +1,22 @@
 import React from 'react';
+import axios from 'axios';
 import Header from './Components/Header';
+import ContestPreview from "./Components/ContestPreview";
 
 class App extends React.Component {
     state = {
-        pageHeader: 'Naming Contests'
+        pageHeader: 'Naming Contests',
+        contests: []
     };
 
     componentDidMount() {
-        console.log('did Mount');
+        axios.get('/api/contests')
+            .then(resp => {
+                this.setState({
+                    contests: resp.data.contests
+                })
+            })
+            .catch(console.error)
     }
 
     componentWillUnmount() {
@@ -15,13 +24,15 @@ class App extends React.Component {
     }
 
     render() {
-        const { pageHeader } = this.state;
+        const { pageHeader, contests } = this.state;
 
         return (
             <div className="App">
                 <Header message={pageHeader}/>
                 <div>
-                    ...
+                    {
+                        contests.map(c => <ContestPreview key={c.id} contest={{...c}}/>)
+                    }
                 </div>
             </div>
         );
