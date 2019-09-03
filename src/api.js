@@ -17,3 +17,10 @@ export const fetchNames = nameIds => {
         .then(resp => resp.data.names)
         .catch(console.error)
 };
+
+export const addName = (newName, contestId) => {
+    return axios.post('/api/names', {
+        name: newName,
+        contestId
+    }).then(resp => resp.data);
+};
