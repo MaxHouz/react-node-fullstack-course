@@ -5,6 +5,7 @@ import path from 'path';
 
 import express from 'express';
 const server = express();
+import serverRender from "./serverRender";
 
 server.use(sassMiddleware({
     src: path.join(__dirname, 'sass'),
@@ -12,15 +13,20 @@ server.use(sassMiddleware({
 }));
 server.set('view engine', 'ejs');
 
-server.get('/', (req, res) => {
-    res.render('index', {
-        content: '...'
-    });
+server.get(['/', '/contest/:contestId'], (req, res) => {
+    serverRender(req.params.contestId)
+        .then(({ initialMarkup, initialData }) => {
+            res.render('index', {
+                initialData,
+                initialMarkup
+            });
+        })
+        .catch(console.error)
 });
 
 server.use('/api', apiRouter);
 server.use(express.static('public'));
 
-server.listen(config.port, () => {
+server.listen(config.port, config.host, () => {
    console.log('Express listening on port ', config.port);
 });
